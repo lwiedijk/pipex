@@ -1,0 +1,9 @@
+new_fd = [1]
+STDOUT_FILENO = [1]
+testfile met onzins$
+muis$
+dante $
+kaas$
+END$
+$
+$
