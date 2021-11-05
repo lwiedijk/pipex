@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/05 11:43:00 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/05 12:49:13 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,10 @@
 
 void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
 {
-	//pid_t pid;
-	//pid_t first_pid;
-	//pid_t child_getpid;
 	int new_fd;
 
 	dup2(fd_in, STDIN_FILENO);
 	new_fd = dup2(pipe_end[1], STDOUT_FILENO);
-	//printf("   ->child 1: zou in outfile moeten staan\n");
 	close(pipe_end[0]); //fd unuseds in child1
 	close (pipe_end[1]); //fd no longer needed in child sindse stdOUT is a copy of this 
 	close(fd_in); //fd no longer needed in child sindse stdIN is a copy of this 
@@ -35,9 +31,6 @@ void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
 
 void	child2(int fd_out, int pipe_end[2], char **av_exec_2, char **envp)
 {
-	//pid_t pid;
-	//pid_t first_pid;
-	//pid_t child_getpid;
 	int new_fd;
 
 	char *input_from_pipe;
