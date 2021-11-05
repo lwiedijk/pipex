@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/05 12:49:13 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/05 13:43:26 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,31 +18,31 @@
 
 void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
 {
-	int new_fd;
-
-	dup2(fd_in, STDIN_FILENO);
-	new_fd = dup2(pipe_end[1], STDOUT_FILENO);
+	if (dup2(fd_in, STDIN_FILENO) == -1)
+		exit(1);
+	if (dup2(pipe_end[1], STDOUT_FILENO) == -1)
+		exit(1);
 	close(pipe_end[0]); //fd unuseds in child1
 	close (pipe_end[1]); //fd no longer needed in child sindse stdOUT is a copy of this 
 	close(fd_in); //fd no longer needed in child sindse stdIN is a copy of this 
 	execve("/bin/cat", av_exec, envp);
-	printf("   ->dit zou niet geprint moeten worden\n");
+	exit(1); //it only gets to this live in case exec fails. 
 }
 
 void	child2(int fd_out, int pipe_end[2], char **av_exec_2, char **envp)
-{
-	int new_fd;
+{ 
+	//char *input_from_pipe;
+	//input_from_pipe = malloc(sizeof(char) * 1000);
 
-	char *input_from_pipe;
-	input_from_pipe = malloc(sizeof(char) * 1000);
-
-	dup2(pipe_end[0], STDIN_FILENO);
-	new_fd = dup2(fd_out, STDOUT_FILENO);
+	if (dup2(pipe_end[0], STDIN_FILENO) == -1)
+		exit(1);
+	if (dup2(fd_out, STDOUT_FILENO) == -1)
+		exit(1);
 	close(pipe_end[1]); //fd unuseds in child2
 	close(pipe_end[0]); //fd no longer needed in child sindse stdIN is a copy of this 
 	close(fd_out); //fd no longer needed in child sindse stdOUT is a copy of this 
 	execve("/usr/bin/wc", av_exec_2, envp);
-	printf("   ->dit zou niet geprint moeten worden\n");
+	exit(1); //it only gets to this live in case exec fails. 
 }
 
 int	main(int ac, char **av, char **envp)
