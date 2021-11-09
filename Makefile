@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2021/11/03 12:56:27 by lwiedijk      ########   odam.nl          #
+#    Updated: 2021/11/09 14:02:20 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,4 +47,8 @@ re:
 	$(MAKE) fclean
 	$(MAKE) all
 
-.PHONY: all clean fclean re
+test: all
+	rm outfile
+	./pipex infile_1.txt "cat -e" outfile
+
+.PHONY: all clean fclean re test
