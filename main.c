@@ -6,15 +6,16 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/05 13:54:14 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/09 13:57:50 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
+#include <unistd.h> //ook voor macro's voor access
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "pipex.h"
+#include "libft/libft.h"
 
 void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
 {
@@ -47,7 +48,6 @@ void	child2(int fd_out, int pipe_end[2], char **av_exec_2, char **envp)
 
 int	main(int ac, char **av, char **envp)
 {
-	//int i;
 	int	fd_in;
 	int fd_out;
 	int pipe_end[2];
@@ -57,14 +57,33 @@ int	main(int ac, char **av, char **envp)
 	pid_t pid_1;
 	pid_t pid_2;
 
-	//int i;
-	//
-	//i = 0;
-	//while (envp[i])
-	//{
-	//	printf("envp = [%s]\n", envp[i]);
-	//	i++;
-	//}
+	int i;
+	
+	i = 0;
+	while (envp[i])
+	{
+		if (envp[i][0] == 'P' && envp[i][1] == 'A')
+			printf("envp = [%s]\n", envp[i]);
+		i++;
+	}
+
+	int j;
+	int count;
+
+	count = 0;
+	j = 2;
+	printf("av[2] = <%s>\n", av[2]);
+	
+		av_exec = ft_split_and_count(av[2], ' ', &count);
+		j++;
+
+	i = 0;
+	printf ("count = [%d]\n", count);
+	while (i < count)
+	{
+		printf("av_exec = [%s]\n", av_exec[i]);
+		i++;
+	}
 
 	//perror("Fork: ");
 	
@@ -72,11 +91,11 @@ int	main(int ac, char **av, char **envp)
 		exit(1);
 	pipe(pipe_end);
 
-	av_exec = malloc(sizeof(char *) * 4);
-	av_exec[0] = "cat";
-	av_exec[1] = "-e";
-	//av_exec[2] = av[1];
-	av_exec[2] = NULL;
+	//av_exec = malloc(sizeof(char *) * 4);
+	//av_exec[0] = "cat";
+	//av_exec[1] = "-e";
+	////av_exec[2] = av[1];
+	//av_exec[2] = NULL;
 
 	av_exec_2 = malloc(sizeof(char *) * 3);
 	av_exec_2[0] = "wc";
@@ -85,7 +104,7 @@ int	main(int ac, char **av, char **envp)
 	av_exec_2[1] = NULL;
 
 	fd_in = open(av[1], O_RDONLY);
-	fd_out = open(av[2], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
+	fd_out = open(av[3], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
 	if (fd_in < 0 || fd_out < 0)
 	{
 		perror("Error");
