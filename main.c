@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/10 13:27:52 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/10 14:25:07 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,28 +17,6 @@
 #include "pipex.h"
 #include "libft/libft.h"
 
-char	*path_parser(char *cmd, char **envp)
-{
-	char *path;
-	char **env_path;
-	int i;
-
-	cmd = "F";
-	i = 0;
-	while (envp[i])
-	{
-		if (envp[i][0] == 'P' && envp[i][1] == 'A')
-		{
-			printf("envp in path_parser = [%s]\n", envp[i]);
-			env_path = ft_split(envp[i], '=');
-			printf("env_path = [%s]\n", env_path[1]);
-		}
-		i++;
-	}
-	path = NULL;
-	return (path);
-}
-
 void	error_and_exit(int status)
 {
 	if (status == USAGE)
@@ -48,7 +26,7 @@ void	error_and_exit(int status)
 	}
 }
 
-void	free_cmd_array(char **cmd_array)
+void	free_2d_array(char **cmd_array)
 {
 	int i;
 
@@ -59,6 +37,44 @@ void	free_cmd_array(char **cmd_array)
 		i++;
 	}
 	free(cmd_array);
+}
+
+char	*path_parser(char *cmd, char **envp)
+{
+	char *path;
+	char **env_path;
+	char **temp;
+	int count;
+	int i;
+	int j;
+
+	i = 0;
+	while (envp[i])
+	{
+		if (envp[i][0] == 'P' && envp[i][1] == 'A')
+		{
+			printf("envp in path_parser = [%s]\n", envp[i]);
+			temp = ft_split(envp[i], '=');
+			printf("temp_path[1] = [%s]\n", temp[1]);
+			env_path = ft_split_and_count(temp[1], ':', &count);
+			free_2d_array(temp);
+			j = 0;
+			while(j < count)
+			{
+				printf("path[%d] = [%s]\n", j, env_path[j]);
+				j++;
+			}
+			path = ft_strjoin("/", cmd);
+			printf("path = [%s]\n", path);
+			path = ft_strjoin_free(env_path[0], path);
+			printf("path = [%s]\n", path);
+
+
+		}
+		i++;
+	}
+	path = NULL;
+	return (path);
 }
 
 void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
@@ -139,9 +155,9 @@ int	main(int ac, char **av, char **envp)
 		close(fd_in); //fd unuseds in child2
 		child2(fd_out, pipe_end, av_exec_2, envp);
 	}
-	free_cmd_array(av_exec);
-	free_cmd_array(av_exec_2);
-	//system("leaks pipex");
+	free_2d_array(av_exec);
+	free_2d_array(av_exec_2);
+	system("leaks pipex");
 
 	//pipex(fd1, fd2, av, envp);
 }
