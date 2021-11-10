@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/09 13:57:50 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/10 13:27:52 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,55 @@
 #include "pipex.h"
 #include "libft/libft.h"
 
+char	*path_parser(char *cmd, char **envp)
+{
+	char *path;
+	char **env_path;
+	int i;
+
+	cmd = "F";
+	i = 0;
+	while (envp[i])
+	{
+		if (envp[i][0] == 'P' && envp[i][1] == 'A')
+		{
+			printf("envp in path_parser = [%s]\n", envp[i]);
+			env_path = ft_split(envp[i], '=');
+			printf("env_path = [%s]\n", env_path[1]);
+		}
+		i++;
+	}
+	path = NULL;
+	return (path);
+}
+
+void	error_and_exit(int status)
+{
+	if (status == USAGE)
+	{
+		write(STDERR_FILENO, "Usage: ./pipex file1 cmd1 cmd2 file2\n", 37);
+		exit(EXIT_FAILURE);
+	}
+}
+
+void	free_cmd_array(char **cmd_array)
+{
+	int i;
+
+	i = 0;
+	while (cmd_array[i])
+	{
+		free(cmd_array[i]);
+		i++;
+	}
+	free(cmd_array);
+}
+
 void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
 {
+	char *path;
+
+	path = path_parser(av_exec[0], envp);
 	if (dup2(fd_in, STDIN_FILENO) == -1)
 		exit(1);
 	if (dup2(pipe_end[1], STDOUT_FILENO) == -1)
@@ -53,12 +100,14 @@ int	main(int ac, char **av, char **envp)
 	int pipe_end[2];
 	char **av_exec;
 	char **av_exec_2;
-	pid_t first_pid;
 	pid_t pid_1;
 	pid_t pid_2;
-
 	int i;
+	int count;
+	int count2;
 	
+	if (ac != 5)
+		error_and_exit(USAGE);
 	i = 0;
 	while (envp[i])
 	{
@@ -66,53 +115,19 @@ int	main(int ac, char **av, char **envp)
 			printf("envp = [%s]\n", envp[i]);
 		i++;
 	}
-
-	int j;
-	int count;
-
 	count = 0;
-	j = 2;
-	printf("av[2] = <%s>\n", av[2]);
-	
-		av_exec = ft_split_and_count(av[2], ' ', &count);
-		j++;
-
-	i = 0;
-	printf ("count = [%d]\n", count);
-	while (i < count)
-	{
-		printf("av_exec = [%s]\n", av_exec[i]);
-		i++;
-	}
-
-	//perror("Fork: ");
-	
-	if (ac == -1)
-		exit(1);
+	av_exec = ft_split_and_count(av[2], ' ', &count);
+	av_exec_2 = ft_split_and_count(av[3], ' ', &count2);
 	pipe(pipe_end);
-
-	//av_exec = malloc(sizeof(char *) * 4);
-	//av_exec[0] = "cat";
-	//av_exec[1] = "-e";
-	////av_exec[2] = av[1];
-	//av_exec[2] = NULL;
-
-	av_exec_2 = malloc(sizeof(char *) * 3);
-	av_exec_2[0] = "wc";
-	//av_exec_2[1] = "-l";
-	//av_exec_2[1] = stdin;
-	av_exec_2[1] = NULL;
-
 	fd_in = open(av[1], O_RDONLY);
-	fd_out = open(av[3], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
+	fd_out = open(av[4], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
 	if (fd_in < 0 || fd_out < 0)
 	{
 		perror("Error");
-		//return (-1);
+		exit (EXIT_FAILURE);
 	}
-	first_pid = getpid();
-	printf("   ->[pid = %d]		main: getpid\n", first_pid);
 	pid_1 = fork();
+	//perror("Fork: ");
 	if (pid_1 == 0)
 	{
 		close(fd_out); //fd unuseds in child1
@@ -124,11 +139,9 @@ int	main(int ac, char **av, char **envp)
 		close(fd_in); //fd unuseds in child2
 		child2(fd_out, pipe_end, av_exec_2, envp);
 	}
-	free(av_exec);
-	first_pid = getpid();
+	free_cmd_array(av_exec);
+	free_cmd_array(av_exec_2);
+	//system("leaks pipex");
 
 	//pipex(fd1, fd2, av, envp);
-
-
-	printf("   ->[pid = %d]		main: einde main\n", first_pid);
 }
