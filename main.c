@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/10 14:25:07 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/11 10:52:05 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,10 @@ char	*path_parser(char *cmd, char **envp)
 	int count;
 	int i;
 	int j;
+	int read_access;
 
 	i = 0;
+	count = 0;
 	while (envp[i])
 	{
 		if (envp[i][0] == 'P' && envp[i][1] == 'A')
@@ -58,22 +60,32 @@ char	*path_parser(char *cmd, char **envp)
 			printf("temp_path[1] = [%s]\n", temp[1]);
 			env_path = ft_split_and_count(temp[1], ':', &count);
 			free_2d_array(temp);
-			j = 0;
-			while(j < count)
-			{
-				printf("path[%d] = [%s]\n", j, env_path[j]);
-				j++;
-			}
-			path = ft_strjoin("/", cmd);
-			printf("path = [%s]\n", path);
-			path = ft_strjoin_free(env_path[0], path);
-			printf("path = [%s]\n", path);
-
-
+			break ;
 		}
 		i++;
 	}
-	path = NULL;
+	j = 0;
+	while(j < count)
+	{
+		printf("path[%d] = [%s]\n", j, env_path[j]);
+		j++;
+	}
+	i = 0;
+	while (i < count)
+	{
+		path = ft_strjoin("/", cmd);
+		printf("path = [%s]\n", path);
+		path = ft_strjoin_free(env_path[i], path);
+		printf("path = [%s]\n", path);
+		read_access = access(path, F_OK | X_OK);
+		printf("access_%d returned [%d]\n", i, read_access);
+		if (read_access != 0)
+			free(path);
+		else
+			break ;
+		i++;
+	}
+	printf("return path = [%s]\n", path);
 	return (path);
 }
 
@@ -89,7 +101,7 @@ void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
 	close(pipe_end[0]); //fd unuseds in child1
 	close (pipe_end[1]); //fd no longer needed in child sindse stdOUT is a copy of this 
 	close(fd_in); //fd no longer needed in child sindse stdIN is a copy of this 
-	execve("/bin/cat", av_exec, envp);
+	execve(path, av_exec, envp);
 	exit(1); //it only gets to this live in case exec fails. 
 }
 
@@ -97,6 +109,8 @@ void	child2(int fd_out, int pipe_end[2], char **av_exec_2, char **envp)
 { 
 	//char *input_from_pipe;
 	//input_from_pipe = malloc(sizeof(char) * 1000);
+	char *path;
+	path = path_parser(av_exec_2[0], envp);
 
 	if (dup2(pipe_end[0], STDIN_FILENO) == -1)
 		exit(1);
@@ -105,7 +119,7 @@ void	child2(int fd_out, int pipe_end[2], char **av_exec_2, char **envp)
 	close(pipe_end[1]); //fd unuseds in child2
 	close(pipe_end[0]); //fd no longer needed in child sindse stdIN is a copy of this 
 	close(fd_out); //fd no longer needed in child sindse stdOUT is a copy of this 
-	execve("/usr/bin/wc", av_exec_2, envp);
+	execve(path, av_exec_2, envp);
 	exit(1); //it only gets to this live in case exec fails. 
 }
 
@@ -157,7 +171,7 @@ int	main(int ac, char **av, char **envp)
 	}
 	free_2d_array(av_exec);
 	free_2d_array(av_exec_2);
-	system("leaks pipex");
+	//system("leaks pipex");
 
 	//pipex(fd1, fd2, av, envp);
 }
