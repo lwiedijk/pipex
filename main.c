@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/11 11:10:29 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/11 15:21:16 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,22 @@
 void	error_and_exit(int status)
 {
 	if (status == USAGE)
-	{
 		write(STDERR_FILENO, "Usage: ./pipex file1 cmd1 cmd2 file2\n", 37);
-		exit(EXIT_FAILURE);
-	}
+	if (status == MALLOC_FAIL)
+		write(STDERR_FILENO, "Pipex: Malloc fail\n", 19);
+	if (status == SYS_CALL_ERR)
+		perror("");
+	exit(EXIT_FAILURE);
+}
+
+void	close_and_check(int fd)
+{
+	int fail_check;
+
+	fail_check = 0;
+	fail_check = close(fd);
+	if (fail_check == -1)
+		error_and_exit(SYS_CALL_ERR);
 }
 
 void	free_2d_array(char **cmd_array)
@@ -82,14 +94,14 @@ void	child1(int pipe_end[2], int fd_in, char **av_exec, char **envp)
 
 	path = path_parser(av_exec[0], envp);
 	if (dup2(fd_in, STDIN_FILENO) == -1)
-		exit(1);
+		error_and_exit(SYS_CALL_ERR);
 	if (dup2(pipe_end[1], STDOUT_FILENO) == -1)
-		exit(1);
-	close(pipe_end[0]); //fd unuseds in child1
-	close (pipe_end[1]); //fd no longer needed in child sindse stdOUT is a copy of this 
-	close(fd_in); //fd no longer needed in child sindse stdIN is a copy of this 
+		error_and_exit(SYS_CALL_ERR);
+	close_and_check(pipe_end[0]); //fd unuseds in child1
+	close_and_check(pipe_end[1]); //fd no longer needed in child sindse stdOUT is a copy of this 
+	close_and_check(fd_in); //fd no longer needed in child sindse stdIN is a copy of this 
 	execve(path, av_exec, envp);
-	exit(1); //it only gets to this live in case exec fails. 
+	error_and_exit(SYS_CALL_ERR); //it only gets to this live in case exec fails. 
 }
 
 void	child2(int fd_out, int pipe_end[2], char **av_exec_2, char **envp)
@@ -98,64 +110,70 @@ void	child2(int fd_out, int pipe_end[2], char **av_exec_2, char **envp)
 	path = path_parser(av_exec_2[0], envp);
 
 	if (dup2(pipe_end[0], STDIN_FILENO) == -1)
-		exit(1);
+		error_and_exit(SYS_CALL_ERR);
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
-		exit(1);
-	close(pipe_end[1]); //fd unuseds in child2
-	close(pipe_end[0]); //fd no longer needed in child sindse stdIN is a copy of this 
-	close(fd_out); //fd no longer needed in child sindse stdOUT is a copy of this 
+		error_and_exit(SYS_CALL_ERR);
+	close_and_check(pipe_end[1]); //fd unuseds in child2
+	close_and_check(pipe_end[0]); //fd no longer needed in child sindse stdIN is a copy of this 
+	close_and_check(fd_out); //fd no longer needed in child sindse stdOUT is a copy of this 
 	execve(path, av_exec_2, envp);
-	exit(1); //it only gets to this live in case exec fails. 
+	error_and_exit(SYS_CALL_ERR); //it only gets to this live in case exec fails. 
+}
+
+void	initialize(t_exec_vectors *exec_vectors, t_all_fd *all_fd)
+{
+	exec_vectors->vector1 = NULL;
+	exec_vectors->vector2 = NULL;
+	all_fd->fd_in = 0;
+	all_fd->fd_out = 0;
+	all_fd->pipe_end[0] = 0;
+	all_fd->pipe_end[1] = 0;
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	int	fd_in;
-	int fd_out;
-	int pipe_end[2];
-	char **av_exec;
-	char **av_exec_2;
+	t_exec_vectors	exec_vectors;
+	t_all_fd		all_fd;
 	pid_t pid_1;
 	pid_t pid_2;
-	int i;
 	int count;
 	int count2;
-	
+
+	initialize(&exec_vectors, &all_fd);
+
 	if (ac != 5)
 		error_and_exit(USAGE);
-	i = 0;
-	while (envp[i])
-	{
-		if (envp[i][0] == 'P' && envp[i][1] == 'A')
-			printf("envp = [%s]\n", envp[i]);
-		i++;
-	}
 	count = 0;
-	av_exec = ft_split_and_count(av[2], ' ', &count);
-	av_exec_2 = ft_split_and_count(av[3], ' ', &count2);
-	pipe(pipe_end);
-	fd_in = open(av[1], O_RDONLY);
-	fd_out = open(av[4], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
-	if (fd_in < 0 || fd_out < 0)
-	{
-		perror("Error");
-		exit (EXIT_FAILURE);
-	}
+	exec_vectors.vector1 = ft_split_and_count(av[2], ' ', &count);
+	if (!exec_vectors.vector1)
+		error_and_exit(MALLOC_FAIL);
+	exec_vectors.vector2 = ft_split_and_count(av[3], ' ', &count2);
+	if (!exec_vectors.vector2)
+		error_and_exit(MALLOC_FAIL);
+	if (pipe(all_fd.pipe_end) == -1)
+		error_and_exit(SYS_CALL_ERR);
+	all_fd.fd_in = open(av[1], O_RDONLY);
+	all_fd.fd_out = open(av[4], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
+	if (all_fd.fd_in < 0 || all_fd.fd_out < 0)
+		error_and_exit(SYS_CALL_ERR);
 	pid_1 = fork();
-	//perror("Fork: ");
+	if (pid_1 == -1)
+		error_and_exit(SYS_CALL_ERR);
 	if (pid_1 == 0)
 	{
-		close(fd_out); //fd unuseds in child1
-		child1(pipe_end, fd_in, av_exec, envp);
+		close_and_check(all_fd.fd_out); //fd unuseds in child1
+		child1(all_fd.pipe_end, all_fd.fd_in, exec_vectors.vector1, envp);
 	}
 	pid_2 = fork();
+	if (pid_2 == -1)
+		error_and_exit(SYS_CALL_ERR);
 	if (pid_2 == 0)
 	{
-		close(fd_in); //fd unuseds in child2
-		child2(fd_out, pipe_end, av_exec_2, envp);
+		close_and_check(all_fd.fd_in); //fd unuseds in child2
+		child2(all_fd.fd_out, all_fd.pipe_end, exec_vectors.vector2, envp);
 	}
-	free_2d_array(av_exec);
-	free_2d_array(av_exec_2);
+	free_2d_array(exec_vectors.vector1);
+	free_2d_array(exec_vectors.vector2);
 	//system("leaks pipex");
 
 	//pipex(fd1, fd2, av, envp);
