@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2021/11/09 14:02:20 by lwiedijk      ########   odam.nl          #
+#    Updated: 2021/11/11 10:53:36 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,12 @@ re:
 	$(MAKE) all
 
 test: all
-	rm outfile
-	./pipex infile_1.txt "cat -e" outfile
+	rm -f outfile
+	./pipex infile_1.txt "grep dit" "cat -e" outfile
+	< infile_1.txt grep dit | cat -e > outfile_term
+
+test_leaks: all
+	rm -f outfile
+	valgrind ./pipex infile_1.txt "cat -e" "wc" outfile
 
 .PHONY: all clean fclean re test
