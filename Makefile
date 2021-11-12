@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2021/11/11 10:53:36 by lwiedijk      ########   odam.nl          #
+#    Updated: 2021/11/11 13:31:46 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,8 +49,8 @@ re:
 
 test: all
 	rm -f outfile
-	./pipex infile_1.txt "grep dit" "cat -e" outfile
-	< infile_1.txt grep dit | cat -e > outfile_term
+	./pipex infile_1.txt "ls -l" "cat -e" outfile
+	< infile_1.txt ls -l | cat -e > outfile_term
 
 test_leaks: all
 	rm -f outfile
