@@ -6,13 +6,14 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2021/11/11 13:31:46 by lwiedijk      ########   odam.nl          #
+#    Updated: 2021/11/12 11:42:20 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 HEADERS = pipex.h
-SRCS =	main.c
+SRCS =	main.c \
+		pipex.c parser.c free_and_exit.c\
 
 OBJS_DIR = objs/
 _OBJS = $(SRCS:.c=.o)
@@ -36,7 +37,6 @@ $(OBJS_DIR)%.o: %.c $(HEADERS)
 
 clean:
 	rm -f $(LIBFT) $(_OBJS) $(OBJS) 
-	rmdir -p $(OBJS_DIR)
 	make clean -C $(LIBFT_DIR)
 
 fclean: clean

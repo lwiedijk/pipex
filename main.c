@@ -6,185 +6,19 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/12 09:58:35 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/12 11:47:40 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h> //ook voor macro's voor access
 #include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <unistd.h>
 #include "pipex.h"
-#include "libft/libft.h"
-
-void	free_2d_array(char **cmd_array)
-{
-	int i;
-
-	i = 0;
-	while (cmd_array[i])
-	{
-		free(cmd_array[i]);
-		i++;
-	}
-	free(cmd_array);
-}
-
-void	free_on_error(t_exec_vectors *exec_vectors)
-{
-	if (exec_vectors->vector1)
-		free_2d_array(exec_vectors->vector1);
-	else if (exec_vectors->vector2)
-		free_2d_array(exec_vectors->vector2);
-}
-
-void	error_and_exit(int status, t_exec_vectors *exec_vectors)
-{
-	if (status == USAGE)
-		write(STDERR_FILENO, "Usage: ./pipex file1 cmd1 cmd2 file2\n", 37);
-	if (status == MALLOC_FAIL)
-		write(STDERR_FILENO, "Pipex: Malloc fail\n", 19);
-	if (status == SYS_CALL_ERR)
-		perror("");
-	free_on_error(exec_vectors);
-	exit(EXIT_FAILURE);
-}
-
-void	close_and_check(int fd, t_exec_vectors *exec_vectors)
-{
-	int fail_check;
-
-	fail_check = 0;
-	fail_check = close(fd);
-	if (fail_check == -1)
-		error_and_exit(SYS_CALL_ERR, exec_vectors);
-}
-
-char	*path_parser(char *cmd, char **envp, t_exec_vectors *exec_vectors)
-{
-	char *path;
-	char **env_path;
-	char **temp;
-	int count;
-	int i;
-	int read_access;
-
-	i = 0;
-	count = 0;
-	read_access = 0;
-	temp = NULL;
-	env_path = NULL;
-	path = NULL;
-	while (envp[i])
-	{
-		if (envp[i][0] == 'P' && envp[i][1] == 'A')
-		{
-			temp = ft_split(envp[i], '=');
-			if (!temp)
-				error_and_exit(MALLOC_FAIL, exec_vectors);
-			env_path = ft_split_and_count(temp[1], ':', &count);
-			if (!env_path)
-				error_and_exit(MALLOC_FAIL, exec_vectors);
-			free_2d_array(temp);
-			break ;
-		}
-		i++;
-	}
-	i = 0;
-	while (i < count)
-	{
-		path = ft_strjoin("/", cmd);
-		if (!path)
-			error_and_exit(MALLOC_FAIL, exec_vectors);
-		path = ft_strjoin_free(env_path[i], path);
-		if (!path)
-			error_and_exit(MALLOC_FAIL, exec_vectors);
-		read_access = access(path, F_OK | X_OK);
-		if (read_access != 0)
-			free(path);
-		else
-			break ;
-		i++;
-	}
-	return (path);
-}
-
-void	child1(char **envp, t_all_fd *all_fd, t_exec_vectors *exec_vectors)
-{
-	char *path;
-
-	close_and_check(all_fd->fd_out, exec_vectors);
-	path = path_parser(exec_vectors->vector1[0], envp, exec_vectors);
-	if (dup2(all_fd->fd_in, STDIN_FILENO) == -1)
-		error_and_exit(SYS_CALL_ERR, exec_vectors);
-	if (dup2(all_fd->pipe_end[1], STDOUT_FILENO) == -1)
-		error_and_exit(SYS_CALL_ERR, exec_vectors);
-	close_and_check(all_fd->pipe_end[0], exec_vectors); 
-	close_and_check(all_fd->pipe_end[1], exec_vectors);
-	close_and_check(all_fd->fd_in, exec_vectors);
-	execve(path, exec_vectors->vector1, envp);
-	error_and_exit(SYS_CALL_ERR, exec_vectors);
-}
-
-void	child2(char **envp, t_all_fd *all_fd, t_exec_vectors *exec_vectors)
-{ 
-	char *path;
-	
-	close_and_check(all_fd->fd_in, exec_vectors);
-	path = path_parser(exec_vectors->vector2[0], envp, exec_vectors);
-	if (dup2(all_fd->pipe_end[0], STDIN_FILENO) == -1)
-		error_and_exit(SYS_CALL_ERR, exec_vectors);
-	if (dup2(all_fd->fd_out, STDOUT_FILENO) == -1)
-		error_and_exit(SYS_CALL_ERR, exec_vectors);
-	close_and_check(all_fd->pipe_end[1], exec_vectors);
-	close_and_check(all_fd->pipe_end[0], exec_vectors);
-	close_and_check(all_fd->fd_out, exec_vectors);
-	execve(path, exec_vectors->vector2, envp);
-	error_and_exit(SYS_CALL_ERR, exec_vectors);
-}
-
-void	initialize(t_exec_vectors *exec_vectors, t_all_fd *all_fd)
-{
-	exec_vectors->vector1 = NULL;
-	exec_vectors->vector2 = NULL;
-	all_fd->fd_in = 0;
-	all_fd->fd_out = 0;
-	all_fd->pipe_end[0] = 0;
-	all_fd->pipe_end[1] = 0;
-}
-
-void	argument_parser(t_exec_vectors *exec_vectors, char **av)
-{
-	exec_vectors->vector1 = ft_split(av[2], ' ');
-	if (!exec_vectors->vector1)
-		error_and_exit(MALLOC_FAIL, exec_vectors);
-	exec_vectors->vector2 = ft_split(av[3], ' ');
-	if (!exec_vectors->vector2)
-		error_and_exit(MALLOC_FAIL, exec_vectors);
-}
-
-void	fork_processes(t_exec_vectors *exec_vectors, t_all_fd *all_fd, char **envp)
-{
-	pid_t pid_1;
-	pid_t pid_2;
-	
-	pid_1 = fork();
-	if (pid_1 == -1)
-		error_and_exit(SYS_CALL_ERR, exec_vectors);
-	if (pid_1 == 0)
-		child1(envp, all_fd, exec_vectors);
-	pid_2 = fork();
-	if (pid_2 == -1)
-		error_and_exit(SYS_CALL_ERR, exec_vectors);
-	if (pid_2 == 0)
-		child2(envp, all_fd, exec_vectors);
-}
 
 int	main(int ac, char **av, char **envp)
 {
 	t_exec_vectors	exec_vectors;
 	t_all_fd		all_fd;
-	
+
 	initialize(&exec_vectors, &all_fd);
 	if (ac != 5)
 		error_and_exit(USAGE, &exec_vectors);
@@ -198,6 +32,4 @@ int	main(int ac, char **av, char **envp)
 	fork_processes(&exec_vectors, &all_fd, envp);
 	free_2d_array(exec_vectors.vector1);
 	free_2d_array(exec_vectors.vector2);
-	//system("leaks pipex");
-	//pipex(fd1, fd2, av, envp);
 }
