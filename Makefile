@@ -12,7 +12,7 @@
 
 NAME = pipex
 HEADERS = pipex.h
-SRCS =	main.c pipex.c \
+SRCS =	main.c
 
 OBJS_DIR = objs/
 _OBJS = $(SRCS:.c=.o)
