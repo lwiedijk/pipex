@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/10/30 16:06:46 by lwiedijk      #+#    #+#                  #
-#    Updated: 2021/10/14 14:36:58 by lwiedijk      ########   odam.nl          #
+#    Updated: 2021/11/10 14:24:04 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ SRCS = 			ft_atoi.c			\
 	  			ft_strchr.c			\
 	  			ft_strdup.c			\
 	  			ft_strjoin.c		\
+				ft_strjoin_free.c	\
 	  			ft_strlcat.c		\
 	  			ft_strlcpy.c		\
 	  			ft_strlen.c			\
