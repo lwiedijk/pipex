@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/12 09:08:54 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/11/12 09:17:32 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ char	*path_parser(char *cmd, char **envp, t_exec_vectors *exec_vectors)
 		{
 			temp = ft_split(envp[i], '=');
 			if (!temp)
-				error_and_exit(MALLOC_FAIL, &exec_vectors);
+				error_and_exit(MALLOC_FAIL, exec_vectors);
 			env_path = ft_split_and_count(temp[1], ':', &count);
 			if (!env_path)
-				error_and_exit(MALLOC_FAIL, &exec_vectors);
+				error_and_exit(MALLOC_FAIL, exec_vectors);
 			free_2d_array(temp);
 			break ;
 		}
@@ -95,10 +95,10 @@ char	*path_parser(char *cmd, char **envp, t_exec_vectors *exec_vectors)
 	{
 		path = ft_strjoin("/", cmd);
 		if (!path)
-			error_and_exit(MALLOC_FAIL, &exec_vectors);
+			error_and_exit(MALLOC_FAIL, exec_vectors);
 		path = ft_strjoin_free(env_path[i], path);
 		if (!path)
-			error_and_exit(MALLOC_FAIL, &exec_vectors);
+			error_and_exit(MALLOC_FAIL, exec_vectors);
 		read_access = access(path, F_OK | X_OK);
 		if (read_access != 0)
 			free(path);
