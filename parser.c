@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:33:23 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/11/12 11:48:18 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2021/12/15 12:43:34 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,31 @@
 #include <unistd.h>
 #include "libft/libft.h"
 #include "pipex.h"
+#include <stdio.h>
 
 void	argument_parser(t_exec_vectors *exec_vectors, char **av)
 {
+	int ac = 2; // niet de totale ac, maar alleen de cmd
+	int i = 0;
+	int j; // minus de executavle naam en de infile
+	char	***vector;
+
+	vector = (char ***)malloc(sizeof(char **) * (ac + 1));
+	vector[ac] = NULL;
+	while(i < ac)
+	{
+		j = (i + 2);
+		vector[i] = ft_split(av[j], ' ');
+		i++;
+	}
+	//fprintf(stderr, "3D_array_vector = %s\n", vector[0][0]);
+	//fprintf(stderr, "3D_array_vector = %s\n", vector[0][1]);
+	//fprintf(stderr, "3D_array_vector = %s\n", vector[0][2]);
+//
+	//fprintf(stderr, "3D_array_vector = %s\n", vector[1][0]);
+	//fprintf(stderr, "3D_array_vector = %s\n", vector[1][1]);
+	//fprintf(stderr, "3D_array_vector = %s\n", vector[1][2]);
+
 	exec_vectors->vector1 = ft_split(av[2], ' ');
 	if (!exec_vectors->vector1)
 		error_and_exit(MALLOC_FAIL, exec_vectors);
@@ -31,19 +53,27 @@ static char	*check_path(char *cmd, char **env_path, int count,
 	char	*path;
 	int		i;
 	int		read_access;
+	int		read_access_2;
 
 	i = 0;
 	while (i < count)
 	{
+		printf("check_path: cmd is [%s]\n", cmd);
 		path = ft_strjoin("/", cmd);
 		if (!path)
 			error_and_exit(MALLOC_FAIL, exec_vectors);
 		path = ft_strjoin_free(env_path[i], path);
 		if (!path)
 			error_and_exit(MALLOC_FAIL, exec_vectors);
+		read_access_2 = access(cmd, F_OK | X_OK);
 		read_access = access(path, F_OK | X_OK);
+		printf("check_path: path is [%s]\n", path);
+		printf("check_path: access_status_2 is [%d]\n", read_access_2);
 		if (read_access != 0)
+		{
 			free(path);
+			path = NULL;
+		}
 		else
 			break ;
 		i++;
@@ -89,5 +119,9 @@ char	*path_parser(char *cmd, char **envp, t_exec_vectors *exec_vectors)
 	path = NULL;
 	env_path = get_path_array(exec_vectors, envp, &count);
 	path = check_path(cmd, env_path, count, exec_vectors);
+	fprintf(stderr, "path_parser: path is [%s]\n", path);
+	//path = NULL;
+	if (!path)
+		exit(120);//error_and_exit(NO_EXISTING_PATH, exec_vectors);
 	return (path);
 }
