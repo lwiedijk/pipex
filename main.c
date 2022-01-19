@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/12/16 13:33:54 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/19 09:24:59 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	main(int ac, char **av, char **envp)
 	t_exec_vectors	exec_vectors;
 	t_all_fd		all_fd;
 	t_pipe_ends		*array_of_ends;
+	char			***cmd_vectors;
 	int				cmd_count;
 
 	cmd_count = ac - 3;
@@ -32,14 +33,16 @@ int	main(int ac, char **av, char **envp)
 	initialize(&exec_vectors, &all_fd);
 	if (ac < 5)
 		error_and_exit(USAGE, &exec_vectors);
-	argument_parser(&exec_vectors, av);
-	if (pipe(all_fd.pipe_end) == -1)
-		error_and_exit(SYS_CALL_ERR, &exec_vectors);
+	cmd_vectors = argument_parser(&exec_vectors, av, (ac - 2));
+	//if (pipe(all_fd.pipe_end) == -1)
+	//	error_and_exit(SYS_CALL_ERR, &exec_vectors);
+	//if (pipe(all_fd.pipe_end_two) == -1)
+	//	error_and_exit(SYS_CALL_ERR, &exec_vectors);
 	all_fd.fd_in = open(av[1], O_RDONLY);
-	all_fd.fd_out = open(av[4], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
-	if (all_fd.fd_in < 0 || all_fd.fd_out < 0)
+	all_fd.fd_out = open(av[ac - 1], O_CREAT | O_RDWR | O_TRUNC, MODE_RW_R_R);
+	if (all_fd.fd_in < 0 || all_fd.fd_out < 0) //dit moet dus precieser voor return error ding
 		error_open(av[1], &exec_vectors);
-	fork_processes(&exec_vectors, &all_fd, envp, cmd_count);
+	fork_processes(&exec_vectors, &all_fd, envp, cmd_count, cmd_vectors);
 	free_2d_array(exec_vectors.vector1);
 	free_2d_array(exec_vectors.vector2);
 	exit(EXIT_SUCCESS);
