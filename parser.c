@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:33:23 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2021/12/15 12:43:34 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/18 17:43:07 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,8 @@
 #include "pipex.h"
 #include <stdio.h>
 
-void	argument_parser(t_exec_vectors *exec_vectors, char **av)
+char	***argument_parser(t_exec_vectors *exec_vectors, char **av, int ac)
 {
-	int ac = 2; // niet de totale ac, maar alleen de cmd
 	int i = 0;
 	int j; // minus de executavle naam en de infile
 	char	***vector;
@@ -45,6 +44,7 @@ void	argument_parser(t_exec_vectors *exec_vectors, char **av)
 	exec_vectors->vector2 = ft_split(av[3], ' ');
 	if (!exec_vectors->vector2)
 		error_and_exit(MALLOC_FAIL, exec_vectors);
+	return(vector);
 }
 
 static char	*check_path(char *cmd, char **env_path, int count,
@@ -67,8 +67,8 @@ static char	*check_path(char *cmd, char **env_path, int count,
 			error_and_exit(MALLOC_FAIL, exec_vectors);
 		read_access_2 = access(cmd, F_OK | X_OK);
 		read_access = access(path, F_OK | X_OK);
-		printf("check_path: path is [%s]\n", path);
-		printf("check_path: access_status_2 is [%d]\n", read_access_2);
+		//fprintf(stderr, "check_path: path is [%s]\n", path);
+		//fprintf(stderr, "check_path: access_status_2 is [%d]\n", read_access_2);
 		if (read_access != 0)
 		{
 			free(path);
@@ -117,6 +117,7 @@ char	*path_parser(char *cmd, char **envp, t_exec_vectors *exec_vectors)
 
 	count = 0;
 	path = NULL;
+	//fprintf(stderr, "check\n");
 	env_path = get_path_array(exec_vectors, envp, &count);
 	path = check_path(cmd, env_path, count, exec_vectors);
 	fprintf(stderr, "path_parser: path is [%s]\n", path);
