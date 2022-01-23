@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/10/20 11:04:06 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/19 13:38:48 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/23 13:37:13 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <sys/wait.h>
 #include <stdlib.h> //wait
 
+#include <strings.h>
 static void	launch_child_process(char **envp, char ***cmd_vectors, t_all_fd *all_fd,
 					int child_count, int cmd_count, int previous_pipe_to_read_from)
 {
@@ -43,13 +44,14 @@ static void	launch_child_process(char **envp, char ***cmd_vectors, t_all_fd *all
 			error_and_exit(SYS_CALL_ERR, cmd_vectors);
 	}
 	
-	//int check = close(all_fd->pipe_end[1]);
-	//fprintf(stderr, "close check = [%d]\n", check);
-	//close(all_fd->pipe_end[0]);
-	//close_and_check(all_fd->fd_in, exec_vectors);
-	//close_and_check(all_fd->pipe_end[1], exec_vectors);
-	//close_and_check(all_fd->pipe_end[0], exec_vectors);
-	//close_and_check(all_fd->fd_out, exec_vectors);
+	if ((child_count + 1) != cmd_count)
+		close_and_check(all_fd->pipe_end[1], cmd_vectors);
+	if ((child_count + 1) != cmd_count)
+		close_and_check(all_fd->pipe_end[0], cmd_vectors);
+	if (previous_pipe_to_read_from != 0)
+		close_and_check(previous_pipe_to_read_from, cmd_vectors);
+	close_and_check(all_fd->fd_in, cmd_vectors);
+	close_and_check(all_fd->fd_out, cmd_vectors);
 
 	path = path_parser(cmd_vectors[child_count][0], envp, cmd_vectors);
 	execve(path, cmd_vectors[child_count], envp);
@@ -89,6 +91,7 @@ void	fork_processes(t_all_fd *all_fd, char **envp, int cmd_count, char ***cmd_ve
 		if (previous_pipe_to_read_from != 0)
 			close(previous_pipe_to_read_from);
 		child_count++;
+		//sleep(1);
 	}
 	//system("lsof -c pipex");
 	while (1)
