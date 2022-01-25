@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:40:28 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/25 07:52:31 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/25 07:56:51 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	free_3d_array(char ***cmd_array)
 	}
 	free(cmd_array);
 	//git try
+	//git try again
 }
 
 void	free_on_error(char ***cmd_vectors)
