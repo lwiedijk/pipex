@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:40:28 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/25 07:56:51 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/26 14:35:50 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ void	free_3d_array(char ***cmd_array)
 		i++;
 	}
 	free(cmd_array);
-	//git try
-	//git try again
 }
 
 void	free_on_error(char ***cmd_vectors)
@@ -56,18 +54,24 @@ void	free_on_error(char ***cmd_vectors)
 		free_3d_array(cmd_vectors);
 }
 
-void	error_open(char *file, char ***cmd_vectors)
+void	command_not_found(char *error_object)
 {
 	write(STDERR_FILENO, "pipex: ", 7);
-	//write(STDERR_FILENO, file, ft_strlen(file));
-	//write(STDERR_FILENO, ": ", 2);
-	perror(file);
-	free_on_error(cmd_vectors);
-	exit(EXIT_FAILURE); // exit correctly and not in error func want 2de cmd!
+	write(STDERR_FILENO, error_object, ft_strlen(error_object));
+	write(STDERR_FILENO, ": command not found\n", 20);
+	exit(127);
+}
+
+void	error_message_and_continue(char *error_object)
+{
+	write(STDERR_FILENO, "pipex: ", 7);
+	perror(error_object);
+	
 }
 
 void	error_and_exit(int status, char ***cmd_vectors)
 {
+	fprintf(stderr, "EROOROOORORO\n");
 	if (status == USAGE)
 		write(STDERR_FILENO, "usage: ./pipex file1 cmd1 cmd2 file2\n", 37);
 	if (status == MALLOC_FAIL)
