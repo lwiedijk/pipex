@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:40:28 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/26 14:35:50 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/27 11:51:15 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,18 @@ void	error_message_and_continue(char *error_object)
 {
 	write(STDERR_FILENO, "pipex: ", 7);
 	perror(error_object);
-	
+}
+
+void	error_message_and_exit(void)
+{
+	perror("pipex");
+	exit(EXIT_FAILURE);
+}
+
+void	pipex_error_and_exit(void)
+{
+	write(STDERR_FILENO, "usage: ./pipex file1 cmd1 cmd2 file2\n", 37);
+	exit(EXIT_FAILURE);
 }
 
 void	error_and_exit(int status, char ***cmd_vectors)
@@ -84,12 +95,12 @@ void	error_and_exit(int status, char ***cmd_vectors)
 	exit(EXIT_FAILURE);
 }
 
-void	close_and_check(int fd, char ***cmd_vectors)
+void	close_and_check(int fd)
 {
 	int	fail_check;
 
 	fail_check = 0;
 	fail_check = close(fd);
 	if (fail_check == -1)
-		error_and_exit(SYS_CALL_ERR, cmd_vectors);
+		error_message_and_continue("fd");
 }
