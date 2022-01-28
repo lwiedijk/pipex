@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:07:46 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/28 10:56:50 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/28 14:10:12 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,17 @@
 # define OUTFILE 1
 # define INFILE 1
 
-typedef enum e_error_status
-{
-	OK,
-	ERROR,
-	SYS_CALL_ERR,
-	USAGE,
-	MALLOC_FAIL,
-	NO_EXISTING_PATH,
-}	t_error_status;
+#include <stdbool.h>
 
-//typedef struct s_exec_vectors
+//typedef enum e_error_status
 //{
-//	char	**vector1;
-//	char	**vector2;
-//}					t_exec_vectors;
-
-//typedef struct s_pipe_ends
-//{
-//	int pipe_ends[2];
-//}				t_pipe_ends;
+//	OK,
+//	ERROR,
+//	SYS_CALL_ERR,
+//	USAGE,
+//	MALLOC_FAIL,
+//	NO_EXISTING_PATH,
+//}	t_error_status;
 
 typedef struct s_all_fd
 {
@@ -51,23 +42,26 @@ typedef struct s_all_fd
 	int	exitstatus;
 }					t_all_fd;
 
-/* pipec.c */
+/* pipex.c */
 void	fork_processes(t_all_fd *all_fd, char **envp, int cmd_count, char ***cmd_vectors);
-void	initialize(t_all_fd *all_fd);
 
 /* parser.c */
 char	***argument_parser(char **av, int ac);
 char	*path_parser(char *cmd, char **envp);
 
-/* free_and_exit.c */
+/* utils.c */
+void	close_and_check(int fd);
+bool	is_path(char *cmd);
+void	initialize(t_all_fd *all_fd);
+
+/* error.c */
 void	error_message_and_continue(char *error_object);
 void	error_message_and_exit(void);
 void	pipex_error_and_exit(void);
 void	command_not_found(char *error_object);
 void	close_and_check(int fd);
-//void	error_and_exit(int status, char ***cmd_vectors);
-//void	error_open(char *file, char ***cmd_vectors);
-//void	free_on_error(char ***cmd_vectors);
+
+/* free.c */
 void	free_2d_array(char **cmd_array);
 void	free_3d_array(char ***cmd_array);
 
