@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2021/11/12 11:42:20 by lwiedijk      ########   odam.nl          #
+#    Updated: 2022/01/28 13:31:50 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,17 @@ $(OBJS_DIR)%.o: %.c $(HEADERS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+test: all
+	rm -f outfile
+	./pipex infile.txt "cat -e" "cat -e" "/bin/cat -e" outfile
+	< infile.txt cat -e | cat -e | /bin/cat -e  > outfile_term
+
+test_leaks: all
+	rm -f outfile
+	valgrind ./pipex infile.txt "cat -e" "wc" outfile
+
 clean:
-	rm -f $(LIBFT) $(_OBJS) $(OBJS) 
+	rm -f $(LIBFT) $(_OBJS) $(OBJS)
 	make clean -C $(LIBFT_DIR)
 
 fclean: clean
@@ -47,13 +56,4 @@ re:
 	$(MAKE) fclean
 	$(MAKE) all
 
-test: all
-	rm -f outfile
-	./pipex infile_1.txt "ls -l" "cat -e" outfile
-	< infile_1.txt ls -l | cat -e > outfile_term
-
-test_leaks: all
-	rm -f outfile
-	valgrind ./pipex infile_1.txt "cat -e" "wc" outfile
-
-.PHONY: all clean fclean re test
+.PHONY: all clean fclean re
