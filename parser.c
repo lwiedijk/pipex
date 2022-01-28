@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:33:23 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/28 13:18:58 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/28 14:13:17 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,11 @@
 #include "libft/libft.h"
 #include "pipex.h"
 #include <stdio.h>
-#include <stdbool.h>
 
 char	***argument_parser(char **av, int cmd_count)
 {
-	int i;
-	int j;
+	int		i;
+	int		j;
 	char	***vector;
 
 	i = 0;
@@ -28,7 +27,7 @@ char	***argument_parser(char **av, int cmd_count)
 	if (!vector)
 		error_message_and_exit();
 	vector[cmd_count] = NULL;
-	while(i < cmd_count)
+	while (i < cmd_count)
 	{
 		j = (i + INFILE_EXECPATH);
 		vector[i] = ft_split(av[j], ' ');
@@ -36,7 +35,7 @@ char	***argument_parser(char **av, int cmd_count)
 			error_message_and_exit();
 		i++;
 	}
-	return(vector);
+	return (vector);
 }
 
 static char	*check_path(char *cmd, char **env_path, int count)
@@ -68,25 +67,11 @@ static char	*check_path(char *cmd, char **env_path, int count)
 	return (path);
 }
 
-static bool	is_path(char *cmd)
-{
-	int i;
-
-	i = 0;
-	while (cmd[i])
-	{
-		if (cmd[i] == '/')
-			return(true);
-		i++;
-	}
-	return(false);
-}
-
-static char *check_hard_path(char *path)
+static char	*check_hard_path(char *path)
 {
 	int	is_not_executable;
 	int	file_does_not_exists;
-	
+
 	if (!is_path(path))
 		command_not_found(path);
 	is_not_executable = access(path, F_OK | X_OK);
@@ -104,7 +89,7 @@ static char *check_hard_path(char *path)
 			exit(126);
 		}
 	}
-	return path;
+	return (path);
 }
 
 static char	**get_env_path_array(char **envp, int *count)

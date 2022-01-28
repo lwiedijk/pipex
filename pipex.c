@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/10/20 11:04:06 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/28 13:00:50 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/28 14:09:25 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,6 @@ static void	launch_child_process(char **envp, char ***cmd_vectors, t_all_fd *all
 	path = path_parser(cmd_vectors[child_count][0], envp);
 	execve(path, cmd_vectors[child_count], envp);
 	error_message_and_exit();
-}
-
-void	initialize(t_all_fd *all_fd)
-{
-	all_fd->fd_in = 0;
-	all_fd->fd_out = 0;
-	all_fd->pipe_end[0] = 0;
-	all_fd->pipe_end[1] = 0;
-	all_fd->exitstatus = 0;
 }
 
 void	fork_processes(t_all_fd *all_fd, char **envp, int cmd_count, char ***cmd_vectors)
