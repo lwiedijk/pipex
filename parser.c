@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:33:23 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/28 14:13:17 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/01/30 15:21:28 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static char	*check_path(char *cmd, char **env_path, int count)
 	return (path);
 }
 
-static char	*check_hard_path(char *path)
+static char	*check_absolute_path(char *path)
 {
 	int	is_not_executable;
 	int	file_does_not_exists;
@@ -130,6 +130,6 @@ char	*path_parser(char *cmd, char **envp)
 	env_path = get_env_path_array(envp, &count);
 	path = check_path(cmd, env_path, count);
 	if (!path)
-		path = check_hard_path(cmd);
+		path = check_absolute_path(cmd);
 	return (path);
 }

@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2022/01/28 14:08:57 by lwiedijk      ########   odam.nl          #
+#    Updated: 2022/01/30 12:45:39 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 HEADERS = pipex.h
 SRCS =	main.c \
 		pipex.c parser.c utils.c \
-		error.c free.c \
+		child_process.c error.c free.c \
 
 OBJS_DIR = objs/
 _OBJS = $(SRCS:.c=.o)
