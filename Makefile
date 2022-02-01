@@ -6,28 +6,40 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2022/01/30 12:45:39 by lwiedijk      ########   odam.nl          #
+#    Updated: 2022/02/01 11:55:46 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = pipex
-HEADERS = pipex.h
-SRCS =	main.c \
-		pipex.c parser.c utils.c \
-		child_process.c error.c free.c \
+NAME =		pipex
+HEADERS =	pipex.h
+SRCS =		pipex.c parser.c utils.c \
+			child_process.c error.c free.c
+NORMAL =	main.c
+BONUS = 	main_bonus.c
 
-OBJS_DIR = objs/
-_OBJS = $(SRCS:.c=.o)
-OBJS = $(addprefix $(OBJS_DIR), $(_OBJS))
 
-LIBFT_DIR = libft/
-LIBFT = libft.a
+OBJS_DIR =	objs/
+_OBJS =		$(SRCS:.c=.o)
+_NORMAL =	$(NORMAL:.c=.o)
+_BONUS =	$(BONUS:.c=.o)
 
-CFLAGS = -Wall -Wextra -Werror -g
+ifdef WITH_PIPEX_BONUS
+	OBJS =		$(addprefix $(OBJS_DIR), $(_OBJS) $(_BONUS))
+	OTHER =		$(addprefix $(OBJS_DIR), $(_NORMAL))
+else
+	OBJS =		$(addprefix $(OBJS_DIR), $(_OBJS) $(_NORMAL))
+	OTHER =		$(addprefix $(OBJS_DIR), $(_BONUS))
+endif
+
+LIBFT_DIR =	libft/
+LIBFT =		libft.a
+
+CFLAGS =	-Wall -Wextra -Werror -g
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
+	rm -f $(OTHER)
 	make bonus -C $(LIBFT_DIR)
 	cp $(LIBFT_DIR)$(LIBFT) ./
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -L. -lft -o $(NAME)
@@ -36,25 +48,17 @@ $(OBJS_DIR)%.o: %.c $(HEADERS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-test: all
-	rm -f outfile
-	./pipex infile.txt "cat -e" "cat -e" "/bin/cat -e" outfile
-	< infile.txt cat -e | cat -e | /bin/cat -e  > outfile_term
-
-test_leaks: all
-	rm -f outfile
-	valgrind ./pipex infile.txt "cat -e" "wc" outfile
+bonus:
+	$(MAKE) WITH_PIPEX_BONUS=1 all
 
 clean:
-	rm -f $(LIBFT) $(_OBJS) $(OBJS)
+	rm -f $(LIBFT) $(_OBJS) $(OBJS) $(OTHER)
 	make clean -C $(LIBFT_DIR)
 
 fclean: clean
 	rm -f $(NAME)
 	make fclean -C $(LIBFT_DIR)
 
-re:
-	$(MAKE) fclean
-	$(MAKE) all
+re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
