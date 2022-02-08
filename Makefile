@@ -6,18 +6,17 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2022/02/04 09:05:23 by lwiedijk      ########   odam.nl          #
+#    Updated: 2022/02/08 09:19:41 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME =		pipex
-HEADERS =	pipex.h get_next_line.h
-SRCS =		pipex.c parser.c utils.c \
-			error.c free.c
-NORMAL =	main.c child_process.c
-BONUS = 	main_bonus.c child_process_bonus.c \
-			here_doc.c get_next_line.c get_next_line_utils.c
+HEADERS =	pipex.h
 
+SRCS =		pipex.c child_process.c parser.c \
+			error.c free.c utils.c
+NORMAL =	main.c
+BONUS = 	main_bonus.c here_doc.c
 
 OBJS_DIR =	objs/
 _OBJS =		$(SRCS:.c=.o)

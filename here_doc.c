@@ -6,12 +6,11 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/04 09:07:43 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/04 14:12:13 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 09:00:38 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include "get_next_line.h"
 #include "libft/libft.h"
 #include "pipex.h"
 

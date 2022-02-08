@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:33:23 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/30 15:21:28 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 09:32:00 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,28 @@
 #include <unistd.h>
 #include "libft/libft.h"
 #include "pipex.h"
-#include <stdio.h>
 
-char	***argument_parser(char **av, int cmd_count)
+char	***argument_parser(char **av, int cmd_count, t_metadata *data)
 {
 	int		i;
 	int		j;
+	int		unused_arg_vals;
 	char	***vector;
 
 	i = 0;
+	unused_arg_vals = INFILE_EXECPATH;
+	if (data->limiter)
+	{
+		data->cmd_count = data->cmd_count - 1;
+		unused_arg_vals = INFILE_EXECPATH + 1;
+	}
 	vector = (char ***)malloc(sizeof(char **) * (cmd_count + 1));
 	if (!vector)
 		error_message_and_exit();
 	vector[cmd_count] = NULL;
 	while (i < cmd_count)
 	{
-		j = (i + INFILE_EXECPATH);
+		j = (i + unused_arg_vals);
 		vector[i] = ft_split(av[j], ' ');
 		if (!vector[i])
 			error_message_and_exit();
