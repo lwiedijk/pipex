@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 09:34:24 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 13:50:42 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	main(int ac, char **av, char **envp)
 	if (all_fd.fd_in < 0)
 		error_message_and_continue(av[INFILE]);
 	all_fd.fd_out = open(av[ac - OUTFILE],
-			O_CREAT | O_WRONLY | O_TRUNC, MODE_W_W_W);
+			O_CREAT | O_WRONLY | O_TRUNC, MODE_RW_R_R);
 	if (all_fd.fd_out < 0)
 		error_message_and_continue(av[ac - OUTFILE]);
 	pipex(&data, &all_fd, envp, cmd_vectors);

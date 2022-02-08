@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:07:46 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 09:30:05 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 14:55:16 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,6 @@
 # define PIPEX_H
 
 # define MODE_RW_R_R 0644
-# define MODE_W_W_W 0222
-# define MODE_R_R_R 0444
-# define TRUE 1
-# define FALSE 0
 # define INFILE_OUTFILE_EXECPATH 3
 # define INFILE_EXECPATH 2
 # define OUTFILE 1

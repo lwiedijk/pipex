@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:40:28 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 09:32:43 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 15:22:44 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@ void	error_message_and_continue(char *error_object)
 
 void	pipex_error_and_exit(void)
 {
-	if (write(STDERR_FILENO, "pipex: ", 7) == -1)
-		error_message_and_exit();
-	if (write(STDERR_FILENO, "usage: ./pipex file1 cmd1 cmd2 file2\n", 37) == -1)
+	char	*str;
+
+	str = "pipex: usage: ./pipex file1 cmd1 cmd2 file2\n";
+	if (write(STDERR_FILENO, str, ft_strlen(str)) == -1)
 		error_message_and_exit();
 	exit(EXIT_FAILURE);
 }

@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:33:23 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 09:32:00 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 14:54:21 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,15 +76,15 @@ static char	*check_path(char *cmd, char **env_path, int count)
 static char	*check_absolute_path(char *path)
 {
 	int	is_not_executable;
-	int	file_does_not_exists;
+	int	file_does_not_exist;
 
 	if (!is_path(path))
 		command_not_found(path);
 	is_not_executable = access(path, F_OK | X_OK);
 	if (is_not_executable)
 	{
-		file_does_not_exists = access(path, F_OK);
-		if (file_does_not_exists)
+		file_does_not_exist = access(path, F_OK);
+		if (file_does_not_exist)
 		{
 			error_message_and_continue(path);
 			exit(127);

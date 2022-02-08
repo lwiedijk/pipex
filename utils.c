@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/01/28 13:55:45 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 09:25:55 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 15:46:10 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	close_and_check(int fd)
 {
 	int	fail_check;
 
-	fail_check = 0;
 	fail_check = close(fd);
 	if (fail_check == -1)
 		error_message_and_continue("fd");

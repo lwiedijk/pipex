@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2022/02/08 09:19:41 by lwiedijk      ########   odam.nl          #
+#    Updated: 2022/02/08 15:45:04 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,6 @@ else
 endif
 
 LIBFT_DIR =	libft/
-LIBFT =		libft.a
 
 CFLAGS =	-Wall -Wextra -Werror -g
 
@@ -41,8 +40,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	rm -f $(OTHER)
 	make bonus -C $(LIBFT_DIR)
-	cp $(LIBFT_DIR)$(LIBFT) ./
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -L. -lft -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -Llibft/ -lft -o $(NAME)
 
 $(OBJS_DIR)%.o: %.c $(HEADERS)
 	@mkdir -p $(@D)
@@ -52,7 +50,7 @@ bonus:
 	$(MAKE) WITH_PIPEX_BONUS=1 all
 
 clean:
-	rm -f $(LIBFT) $(_OBJS) $(OBJS) $(OTHER)
+	rm -f $(OBJS) $(OTHER)
 	make clean -C $(LIBFT_DIR)
 
 fclean: clean

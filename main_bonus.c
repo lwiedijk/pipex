@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/01 09:16:04 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/04 14:21:41 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 13:50:54 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	normal_file_handling(t_all_fd *all_fd, int ac, char **av)
 	if (all_fd->fd_in < 0)
 		error_message_and_continue(av[INFILE]);
 	all_fd->fd_out = open(av[ac - OUTFILE],
-			O_CREAT | O_WRONLY | O_TRUNC, MODE_W_W_W);
+			O_CREAT | O_WRONLY | O_TRUNC, MODE_RW_R_R);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -41,7 +41,7 @@ int	main(int ac, char **av, char **envp)
 		data.limiter = av[2];
 		here_doc_handling(&all_fd, &data);
 		all_fd.fd_out = open(av[ac - OUTFILE],
-				O_CREAT | O_WRONLY | O_APPEND, MODE_W_W_W);
+				O_CREAT | O_WRONLY | O_APPEND, MODE_RW_R_R);
 	}
 	else
 		normal_file_handling(&all_fd, ac, av);
