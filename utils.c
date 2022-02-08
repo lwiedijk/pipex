@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/01/28 13:55:45 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/30 14:32:43 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 09:25:55 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ bool	is_path(char *cmd)
 
 void	initialize_fd_struct(t_all_fd *all_fd)
 {
-	all_fd->fd_in = 0;
+	all_fd->fd_in = -1;
 	all_fd->fd_out = 0;
 	all_fd->pipe_end[0] = 0;
 	all_fd->pipe_end[1] = 0;
@@ -52,4 +52,5 @@ void	initialize_data_struct(t_metadata *data)
 	data->child_count = 0;
 	data->exitstatus = 0;
 	data->lastpid = 0;
+	data->limiter = NULL;
 }

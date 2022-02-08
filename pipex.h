@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:07:46 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/01/30 14:37:59 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/08 09:30:05 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PIPEX_H
 
 # define MODE_RW_R_R 0644
+# define MODE_W_W_W 0222
 # define MODE_R_R_R 0444
 # define TRUE 1
 # define FALSE 0
@@ -36,6 +37,7 @@ typedef struct s_metadata
 {
 	int		child_count;
 	int		cmd_count;
+	char	*limiter;
 	pid_t	lastpid;
 	int		exitstatus;
 }					t_metadata;
@@ -49,7 +51,7 @@ void	execute_cmd(t_metadata *medadata, t_all_fd *all_fd,
 			char **envp, char ***cmd_vectors);
 
 /* parser.c */
-char	***argument_parser(char **av, int ac);
+char	***argument_parser(char **av, int cmd_c, t_metadata *data);
 char	*path_parser(char *cmd, char **envp);
 
 /* utils.c */
@@ -67,5 +69,8 @@ void	command_not_found(char *error_object);
 /* free.c */
 void	free_2d_array(char **cmd_array);
 void	free_3d_array(char ***cmd_array);
+
+/* here_doc.c */
+void	here_doc_handling(t_all_fd *all_fd, t_metadata *data);
 
 #endif
