@@ -6,13 +6,13 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:33:23 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 14:54:21 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/09 11:20:12 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
-#include "libft/libft.h"
+#include "libft.h"
 #include "pipex.h"
 
 char	***argument_parser(char **av, int cmd_count, t_metadata *data)

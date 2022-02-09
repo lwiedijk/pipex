@@ -6,13 +6,13 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/04 09:07:43 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 14:44:55 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/09 11:20:12 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
-#include "libft/libft.h"
+#include "libft.h"
 #include "pipex.h"
 
 static char	*get_input(char *str)

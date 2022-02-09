@@ -6,14 +6,14 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/12 11:40:28 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 15:22:44 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/09 11:20:12 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include "libft/libft.h"
+#include "libft.h"
 
 void	error_message_and_exit(void)
 {

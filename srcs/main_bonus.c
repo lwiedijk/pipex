@@ -6,14 +6,14 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/01 09:16:04 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 13:50:54 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/09 11:20:12 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
 #include <stdlib.h>
 #include "pipex.h"
-#include "libft/libft.h"
+#include "libft.h"
 
 static void	normal_file_handling(t_all_fd *all_fd, int ac, char **av)
 {
