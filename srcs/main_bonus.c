@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/02/01 09:16:04 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/09 11:20:12 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/10 13:30:04 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,25 +24,30 @@ static void	normal_file_handling(t_all_fd *all_fd, int ac, char **av)
 			O_CREAT | O_WRONLY | O_TRUNC, MODE_RW_R_R);
 }
 
+static void	call_heredoc(t_metadata *data, t_all_fd *all_fd, int ac, char **av)
+{
+	if (ac < 6)
+		pipex_bonus_usage_error(HEREDOC);
+	data->limiter = av[2];
+	here_doc_handling(all_fd, data);
+	all_fd->fd_out = open(av[ac - OUTFILE],
+			O_CREAT | O_WRONLY | O_APPEND, MODE_RW_R_R);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_metadata	data;
 	t_all_fd	all_fd;
 	char		***cmd_vectors;
 
+	if (ac < 5)
+		pipex_bonus_usage_error(BONUS);
 	data.cmd_count = ac - INFILE_OUTFILE_EXECPATH;
 	cmd_vectors = NULL;
 	initialize_data_struct(&data);
 	initialize_fd_struct(&all_fd);
-	if (ac < 5)
-		pipex_error_and_exit();
-	if (!ft_strncmp(av[INFILE], "here_doc", 8))
-	{
-		data.limiter = av[2];
-		here_doc_handling(&all_fd, &data);
-		all_fd.fd_out = open(av[ac - OUTFILE],
-				O_CREAT | O_WRONLY | O_APPEND, MODE_RW_R_R);
-	}
+	if (!ft_strcmp(av[INFILE], "here_doc"))
+		call_heredoc(&data, &all_fd, ac, av);
 	else
 		normal_file_handling(&all_fd, ac, av);
 	cmd_vectors = argument_parser(av, data.cmd_count, &data);
