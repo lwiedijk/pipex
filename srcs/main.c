@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:18:32 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 13:50:42 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/10 13:33:41 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ int	main(int ac, char **av, char **envp)
 	t_all_fd	all_fd;
 	char		***cmd_vectors;
 
+	if (ac != 5)
+		pipex_usage_error();
 	data.cmd_count = ac - INFILE_OUTFILE_EXECPATH;
 	cmd_vectors = NULL;
 	initialize_data_struct(&data);
 	initialize_fd_struct(&all_fd);
-	if (ac != 5)
-		pipex_error_and_exit();
 	cmd_vectors = argument_parser(av, data.cmd_count, &data);
 	all_fd.fd_in = open(av[INFILE], O_RDONLY);
 	if (all_fd.fd_in < 0)
