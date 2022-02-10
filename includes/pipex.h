@@ -6,7 +6,7 @@
 /*   By: lwiedijk <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/03 11:07:46 by lwiedijk      #+#    #+#                 */
-/*   Updated: 2022/02/08 14:55:16 by lwiedijk      ########   odam.nl         */
+/*   Updated: 2022/02/10 13:16:03 by lwiedijk      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@
 # define INFILE 1
 
 # include <stdbool.h>
+
+typedef enum e_error_code
+{
+	OK,
+	BONUS,
+	HEREDOC,
+}	t_error_code;
 
 typedef struct s_all_fd
 {
@@ -59,7 +66,8 @@ void	initialize_data_struct(t_metadata *data);
 /* error.c */
 void	error_message_and_exit(void);
 void	error_message_and_continue(char *error_object);
-void	pipex_error_and_exit(void);
+void	pipex_usage_error(void);
+void	pipex_bonus_usage_error(int error_code);
 void	command_not_found(char *error_object);
 
 /* free.c */
