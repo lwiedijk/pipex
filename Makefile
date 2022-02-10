@@ -6,7 +6,7 @@
 #    By: lwiedijk <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/08/27 11:19:54 by lwiedijk      #+#    #+#                  #
-#    Updated: 2022/02/09 11:32:31 by lwiedijk      ########   odam.nl          #
+#    Updated: 2022/02/10 13:43:23 by lwiedijk      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRCS =			pipex.c child_process.c parser.c \
 				error.c free.c utils.c
 NORMAL =		main.c
 BONUS = 		main_bonus.c here_doc.c
-HEADERS =		pipex.h 
+HEADERS =		pipex.h
 _OBJS =			$(SRCS:.c=.o)
 _NORMAL =		$(NORMAL:.c=.o)
 _BONUS =		$(BONUS:.c=.o)
